@@ -8,11 +8,19 @@
   <body>
     <h1>Hello, world!</h1>
     <button type="button" id="btn">Send a book</button>
+    <button type="button" id="exampleBtn">Trigger Example</button>
     <div id="errDiv"></div>
-    <div data-netlify-identity-button>Login with Netlify Identity</div>
+    <div data-netlify-identity-button></div>
     <script type="text/javascript">
       btn.onclick = () => {
         fetch('https://free-books.netlify.app/.netlify/functions/mailBook')
+          .catch(e => {
+            errDiv.innerText = e.toString();
+          })
+      }
+
+      exampleBtn.onclick = () => {
+        fetch('https://free-books.netlify.app/.netlify/functions/example')
           .catch(e => {
             errDiv.innerText = e.toString();
           })
