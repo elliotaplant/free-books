@@ -2,6 +2,7 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 
 const SECRETS_PATH = './secrets.json';
+const FROM_NETLIFY = process.env.FROM_NETLIFY;
 
 function getAuth() {
   let user, pass;
@@ -34,7 +35,7 @@ exports.handler = function () {
   const mailOptions = {
     from: auth.user,
     to: 'elliotsstorage@gmail.com',
-    subject: 'Email using Node.js ' + Math.floor(Math.random() * 100),
+    subject: 'Email using Node.js ' + Math.floor(Math.random() * 100) + FROM_NETLIFY,
     text: 'That was easy!',
     attachments: [
       {
