@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const fs = require('fs');
 
 function getAuth() {
   let user, pass;
@@ -7,11 +8,13 @@ function getAuth() {
 
   if (!user || !pass) {
     try {
-      const { email, password } = require('./secrets.json');
-      user = email;
-      pass = password;
-    } catch (e) {
-      // No-op
+      if (fs.existsSync('./secrets.json')) {
+        const { email, password } = require('./secrets.json');
+        user = email;
+        pass = password;
+      }
+    } catch(err) {
+      console.error(err);
     }
   }
 
