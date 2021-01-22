@@ -1,6 +1,8 @@
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 
+const SECRETS_PATH = './secrets.json';
+
 function getAuth() {
   let user, pass;
   user = process.env.EMAIL;
@@ -8,8 +10,8 @@ function getAuth() {
 
   if (!user || !pass) {
     try {
-      if (fs.existsSync('./secrets.json')) {
-        const { email, password } = require('./secrets.json');
+      if (fs.existsSync(SECRETS_PATH)) {
+        const { email, password } = JSON.parse(fs.readFileSync(SECRETS_PATH));
         user = email;
         pass = password;
       }
