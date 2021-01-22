@@ -1,7 +1,9 @@
-exports.handler = function () {
+exports.handler = function (event, context) {
+  const { identity, user } = context.clientContext;
+  console.log('identity', identity);
   return {
     statusCode: 200,
     headers: { 'Access-Control-Allow-Origin': '*' },
-    body: JSON.stringify({ hello: 'world' }),
+    body: JSON.stringify({ identity, user }),
   };
 };
