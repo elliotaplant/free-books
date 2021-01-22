@@ -6,5 +6,15 @@
   </head>
   <body>
     <h1>Hello, world!</h1>
+    <button type="button" id="btn">Send a book</button>
+    <div id="errDiv"></div>
+    <script type="text/javascript">
+      btn.onclick = () => {
+        fetch('https://free-books.netlify.app/.netlify/functions/mailBook')
+          .catch(e => {
+            errDiv.innerText = e.toString();
+          })
+      }
+    </script>
   </body>
 </html>
