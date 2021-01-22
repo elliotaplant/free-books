@@ -20,7 +20,9 @@
       }
 
       exampleBtn.onclick = () => {
-        fetch('https://free-books.netlify.app/.netlify/functions/example')
+        fetch('/.netlify/functions/example')
+          .then(r => r.json())
+          .then(console.log)
           .catch(e => {
             errDiv.innerText = e.toString();
           })
