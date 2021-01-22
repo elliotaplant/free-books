@@ -27,25 +27,28 @@ function getAuth() {
   return { user, pass };
 }
 
-const transporter = nodemailer.createTransport({ service: 'gmail', auth: getAuth() });
+module.exports = function () {
+  const auth = getAuth();
+  const transporter = nodemailer.createTransport({ service: 'gmail', auth  });
 
-const mailOptions = {
-  from: getAuth().user,
-  to: 'elliotsstorage@gmail.com',
-  subject: 'Email using Node.js ' + Math.floor(Math.random() * 100),
-  text: 'That was easy!',
-  attachments: [
-    {   // use URL as an attachment
-      filename: 'licence.txt',
-      path: 'https://raw.github.com/nodemailer/nodemailer/master/LICENSE'
-    },
-  ]
+  const mailOptions = {
+    from: auth.user,
+    to: 'elliotsstorage@gmail.com',
+    subject: 'Email using Node.js ' + Math.floor(Math.random() * 100),
+    text: 'That was easy!',
+    attachments: [
+      {
+        filename: 'licence.txt',
+        path: 'https://raw.github.com/nodemailer/nodemailer/master/LICENSE'
+      },
+    ]
+  };
+
+  transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+    }
+  });
 };
-
-transporter.sendMail(mailOptions, function(error, info){
-  if (error) {
-    console.log(error);
-  } else {
-    console.log('Email sent: ' + info.response);
-  }
-});
