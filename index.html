@@ -3,11 +3,13 @@
   <head>
     <meta charset="utf-8">
     <title>Free Books</title>
+    <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   </head>
   <body>
     <h1>Hello, world!</h1>
     <button type="button" id="btn">Send a book</button>
     <div id="errDiv"></div>
+    <div data-netlify-identity-button>Login with Netlify Identity</div>
     <script type="text/javascript">
       btn.onclick = () => {
         fetch('https://free-books.netlify.app/.netlify/functions/mailBook')
