@@ -27,7 +27,7 @@ function getAuth() {
   return { user, pass };
 }
 
-module.exports = function () {
+exports.handler = function () {
   const auth = getAuth();
   const transporter = nodemailer.createTransport({ service: 'gmail', auth  });
 
@@ -51,4 +51,10 @@ module.exports = function () {
       console.log('Email sent: ' + info.response);
     }
   });
+
+  return {
+    statusCode: 200,
+    headers: { 'Access-Control-Allow-Origin': '*' },
+    body: JSON.stringify({ hello: 'world' }),
+  };
 };
