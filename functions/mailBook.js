@@ -11,7 +11,7 @@ function getAuth() {
       user = email;
       pass = password;
     } catch (e) {
-      // Noop
+      // No-op
     }
   }
 
