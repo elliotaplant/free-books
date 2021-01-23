@@ -1,5 +1,4 @@
 const mail = require('../utils/mail');
-const respondWith = require('../utils/respondWith');
 
 exports.handler = async function (event, _, callback) {
   const email = event.queryStringParameters.email;
@@ -7,6 +6,6 @@ exports.handler = async function (event, _, callback) {
   const { filename, uri } = body.output[0];
 
   console.log('Received converted', filename, 'with uri', uri, 'for Kindle address', email);
-  callback(null, respondWith(200, { status: 'sending_mail' }));
+  callback(null, { statusCode: 200 });
   await mail(email, uri, filename);
 };
