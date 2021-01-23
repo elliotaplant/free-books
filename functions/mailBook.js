@@ -17,13 +17,15 @@ exports.handler = async function (event, _, callback) {
 
 
   try {
-
-  // PDFs and MOBIs can go straight to the Kindle
+    console.log('Handling', filename);
+    // PDFs and MOBIs can go straight to the Kindle
     if (['pdf', 'mobi'].includes(extension)) {
+      console.log('Sending', filename, 'directly to the Kindle address', email);
       callback(null, respondWith(200, { status: 'sending_mail' }));
       await mail(email, downloadLink, filename);
     } else {
-    // Other types (ie, ePubs) need to first be converted to MOBI and then sent by mailConverted.js to the Kindle
+      // Other types (ie, ePubs) need to first be converted to MOBI and then sent by mailConverted.js to the Kindle
+      console.log('Converting', filename, 'before sending to the Kindle address', email);
       callback(null, respondWith(200, { status: 'conversion_initiated' }));
       await convert(downloadLink, email);
     }
