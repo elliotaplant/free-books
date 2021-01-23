@@ -1,25 +1,18 @@
 const nodemailer = require('nodemailer');
-const getAuth = require('./getAuth');
+const { SOURCE_EMAIL, SOURCE_EMAIL_PASSWORD } = process.env;
 
-module.exports = async function mail(destination, filename, url) {
-  const auth = getAuth();
+module.exports = async function mail(destinationEmail, downloadLink, filename) {
+  const auth = { user: SOURCE_EMAIL, pass: SOURCE_EMAIL_PASSWORD };
   const transporter = nodemailer.createTransport({ service: 'gmail', auth });
-
   const mailOptions = {
     from: auth.user,
-    to: destination,
+    to: destinationEmail,
     subject: 'Email using Node.js ' + new Date(),
     text: 'That was easy!',
-    attachments: [{ filename, path: url }]
+    attachments: [{ filename, path: downloadLink }]
   };
 
-  return await new Promise((resolve, reject) => {
-    transporter.sendMail(mailOptions, function(error, info) {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(info);
-      }
-    });
+  await new Promise((resolve, reject) => {
+    transporter.sendMail(mailOptions, (error) => error ? reject(error) : resolve({ status: 'sent_mail' }));
   });
 };

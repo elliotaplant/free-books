@@ -14,6 +14,5 @@ exports.handler = async function(event) {
     query: JSON.parse(event.body).query,
   };
   const data = await libgen.search(options);
-  console.log('data', data);
   return respondWith(200, data);
 };
