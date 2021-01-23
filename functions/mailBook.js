@@ -1,26 +1,14 @@
 const mail = require('../utils/mail');
+const validateRequest = require('../utils/validateRequest');
 const respondWith = require('../utils/respondWith');
 
 exports.handler = async function (event) {
-  if (!event.body) {
-    console.error('Missing request body');
-    return respondWith(400, { error: 'Missing request body' });
+  const validationError = validateRequest(event, 'email', 'filename', 'url');
+  if (validationError) {
+    return validationError;
   }
 
-  let body;
-  try {
-    body = JSON.parse(event.body);
-  } catch (e) {
-    console.error('Invalid non-JSON body: ' + event.body);
-    return respondWith(400, { error: 'Invalid non-JSON body: ' + event.body });
-  }
-
-  const { email, filename, url } = body;
-  if (!(email && filename && url)) {
-    console.error('Missing required fields [email, filename, url]');
-    return respondWith(400, { error: 'Missing required fields [email, filename, url]' });
-  }
-
+  const { email, filename, url } = JSON.parse(event.body);
   await mail(email, filename, url);
-  return respondWith(200, { hello: 'world' });
+  return respondWith(200, { status: 'success' });
 };
