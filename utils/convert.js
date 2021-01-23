@@ -18,6 +18,7 @@ module.exports = function convert(sourceUrl, email) {
         target: 'mobi'
       }],
       callback: `${CONVERT_CALLBACK_URL}?email=${email}`
+      // callback: `https://a62b3a95d034.ngrok.io/.netlify/functions/thingey?email=${email}`
     })
   });
 };

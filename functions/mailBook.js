@@ -15,21 +15,22 @@ exports.handler = async function (event, _, callback) {
   const filename = decodeURI(downloadLink.split('/').slice(-1)[0]);
   const extension = filename.split('.').slice(-1)[0];
 
+  const shortFilename = filename.slice(0 , 10);
+  console.log('Handling', shortFilename);
 
   try {
-    console.log('Handling', filename);
     // PDFs and MOBIs can go straight to the Kindle
     if (['pdf', 'mobi'].includes(extension)) {
-      console.log('Sending', filename, 'directly to the Kindle address', email);
+      console.log('Sending', shortFilename, 'directly to the Kindle address', email);
       callback(null, respondWith(200, { status: 'sending_mail' }));
       await mail(email, downloadLink, filename);
     } else {
       // Other types (ie, ePubs) need to first be converted to MOBI and then sent by mailConverted.js to the Kindle
-      console.log('Converting', filename, 'before sending to the Kindle address', email);
+      console.log('Converting', shortFilename, 'before sending to the Kindle address', email);
       callback(null, respondWith(200, { status: 'conversion_initiated' }));
       await convert(downloadLink, email);
     }
   } catch (e) {
-    console.error(`Error occurred while processing ${filename}: ${e}`);
+    console.error(`Error occurred while processing ${shortFilename}: ${e}`);
   }
 };
