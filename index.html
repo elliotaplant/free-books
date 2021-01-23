@@ -54,6 +54,7 @@
             resultsTableBody.innerHTML = queryResponse.map(qr => `
               <td><img class="cover" src="${IMG_PROXY_PREFIX + qr.coverurl}" /></td>
               ${[qr.title, qr.author, qr.language, qr.extension].map(datum => `<td>${datum}</td>`).join('\n')}
+              <td>${(Number(qr.filesize) / 10e6).toFixed(2)} Mb</td>
               <td>
                 <button onclick="requestBook(event)" data-extension=${qr.extension} data-md5=${qr.md5}>
                   Send to Kindle
