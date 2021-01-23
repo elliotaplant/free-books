@@ -1,4 +1,5 @@
 const got = require('got');
+const { CONVERT_CALLBACK_URL } = process.env;
 
 module.exports = function convert(sourceUrl, email) {
   return got.post('https://api2.online-convert.com/jobs', {
@@ -16,7 +17,7 @@ module.exports = function convert(sourceUrl, email) {
         category: 'ebook',
         target: 'mobi'
       }],
-      callback: `https://825a5e94e0f8.ngrok.io/.netlify/functions/mailConverted?email=${email}`
+      callback: `${CONVERT_CALLBACK_URL}?email=${email}`
     })
   });
 };
