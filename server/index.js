@@ -1,7 +1,7 @@
 const fs = require('fs');
 const { getUnfinishedJobs, markJobComplete } = './airtable';
 const mail = require('../utils/mail');
-const logger = require('simple-node-logger').createSimpleLogger('project.log');
+const logger = require('./logger');
 const localConvert = require('./localConvert');
 
 const JOB_RUNNING_FILEPATH = './.jobrunning';
