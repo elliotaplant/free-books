@@ -11,22 +11,53 @@
       .cover {
         width: 5vw;
       }
+
+      label {
+        display: block;
+      }
+
+      input {
+        margin-bottom: 1em;
+        width: 100%;
+        max-width: 20em;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      thead {
+        border-bottom: 1px solid #f2f2f2;
+      }
+
+      th, td {
+        text-align: left;
+        padding: 8px;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
     </style>
   </head>
   <body>
     <h1>Free Books</h1>
     <p>Register the email freebookssender@gmail.com in your Amazon kindle devices page</p>
-    <div>
-      <input id="kindleEmailInput" >
-    </div>
-    <div>
-      <input id="queryInput" >
-      <button type="button" id="queryBtn">Search</button>
-    </div>
+    <form onsubmit="query(event)">
+      <label>Kindle Email</label>
+      <input id="kindleEmailInput" placeholder="youremailaddress@kindle.com" required>
+
+      <br>
+
+      <label>Book Search</label>
+      <input id="queryInput" required>
+      <button id="queryBtn">Search</button>
+    </form>
     <div id="errDiv" style="color: red"></div>
 
     <table id="resultsTable" style="display: none">
-      <thead><th>Cover</th><th>Title</th><th>Author</th><th>Language</th><th>Extension</th><th /></thead>
+      <thead><th>Cover</th><th>Title</th><th>Author</th><th>Language</th><th>Extension</th><th>Size</th><th /></thead>
       <tbody id="resultsTableBody"></tbody>
     </table>
 
@@ -43,7 +74,11 @@
         kindleEmail = kindleEmailInput.value;
       }
 
-      queryBtn.onclick = () => {
+      function query(event) {
+        event.preventDefault();
+        queryBtn.disabled = true;
+        queryBtn.innerText = 'Searching';
+
         fetch('/.netlify/functions/query', {
           method: 'POST',
           body: JSON.stringify({ query: queryInput.value }),
@@ -51,11 +86,16 @@
           .then(r => r.json())
           .then(queryResponse => {
             resultsTable.style.display = 'block';
+            if (!Array.isArray(queryResponse)) {
+              resultsTableBody.innerHTML = '<td>No Results</td>'
+              return;
+            }
             resultsTableBody.innerHTML = queryResponse.map(qr => `
               <td><img class="cover" src="${IMG_PROXY_PREFIX + qr.coverurl}" /></td>
               ${[qr.title, qr.author, qr.language, qr.extension].map(datum => `<td>${datum}</td>`).join('\n')}
               <td>${(Number(qr.filesize) / 10e6).toFixed(2)} Mb</td>
               <td>
+                <span class="loading"></span>
                 <button onclick="requestBook(event)" data-md5=${qr.md5}>
                   Send to Kindle
                 </button>
@@ -65,13 +105,30 @@
           .catch(e => {
             errDiv.innerText = e.toString();
           })
+          .finally(() => {
+            queryBtn.disabled = null;
+            queryBtn.innerText = 'Search';
+          })
       }
 
       function requestBook(event) {
-        const { md5 } = event.target.dataset;
+        console.log('event', event);
+        const btn = event.target;
+        const { md5 } = btn.dataset;
+        const loadingDiv = btn.parentElement.querySelector('.loading');
+        btn.disabled = true;
+        btn.innerText = 'Sending to Kindle';
+
         fetch('/.netlify/functions/createJob', {
           method: 'POST',
           body: JSON.stringify({ email: kindleEmail, md5 })
+        }).then(() => {
+          btn.style.display = 'none';
+          loadingDiv.innerText = 'Sent book to your Kindle. Expect it to arrive in less than five minutes';
+        })
+        .catch(e => {
+          errDiv.innerText = e.toString();
+          btn.innerText = 'Something went wrong :(';
         })
       }
     </script>
