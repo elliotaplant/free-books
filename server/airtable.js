@@ -14,10 +14,10 @@ function getUnfinishedJobs() {
   const jobs = [];
   return new Promise((resolve, reject) => {
     base('jobs')
-      .select({ filterByFormula: 'NOT({sent})' })
+      .select({ fiels: ['url', 'email'], filterByFormula: 'NOT({sent})' })
       .eachPage(
         (records, fetchNextPage) => {
-          jobs.push(...records);
+          jobs.push(...records.map(({ id, fields: { url, email } }) => ({ id, url, email })));
           fetchNextPage();
         },
         err => (err ? reject(err) : resolve(jobs))
