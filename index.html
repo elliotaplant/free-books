@@ -56,7 +56,7 @@
               ${[qr.title, qr.author, qr.language, qr.extension].map(datum => `<td>${datum}</td>`).join('\n')}
               <td>${(Number(qr.filesize) / 10e6).toFixed(2)} Mb</td>
               <td>
-                <button onclick="requestBook(event)" data-extension=${qr.extension} data-md5=${qr.md5}>
+                <button onclick="requestBook(event)" data-md5=${qr.md5}>
                   Send to Kindle
                 </button>
               </td>
@@ -68,8 +68,8 @@
       }
 
       function requestBook(event) {
-        const { md5, extension } = event.target.dataset;
-        fetch('/.netlify/functions/mailBook', {
+        const { md5 } = event.target.dataset;
+        fetch('/.netlify/functions/createJob', {
           method: 'POST',
           body: JSON.stringify({ email: kindleEmail, md5 })
         })

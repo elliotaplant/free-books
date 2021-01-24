@@ -6,6 +6,7 @@ const localConvert = require('./localConvert');
 const { getFilename, getExtension, changeExtension } = require('../utils/fileStuff');
 const workingDir = require('./workingDir');
 const rmDirSync = require('../utils/rmDirSync');
+const getDownloadLink = require('../utils/getDownloadLink');
 
 async function main() {
   logger.warn('Starting free-books server');
@@ -28,14 +29,15 @@ async function main() {
     logger.info(`Found ${unfinishedJobs.length} unfinished jobs`);
 
     for (const job of unfinishedJobs) {
-      const filename = getFilename(job.url);
-      const extension = getExtension(job.url);
+      const downloadLink = await getDownloadLink(job.md5);
+      const filename = getFilename(downloadLink);
+      const extension = getExtension(downloadLink);
       if (['mobi', 'pdf'].includes(extension)) {
         logger.info(`Job ${job.id} has mobi or pdf extension, sending it to ${job.email}`);
-        await mail(job.email, job.url, filename);
+        await mail(job.email, downloadLink, filename);
       } else {
         logger.info(`Job ${job.id} has non mobi or pdf extension, converting it to mobi`);
-        const outputFilePath = await localConvert(job.url);
+        const outputFilePath = await localConvert(downloadLink);
         logger.info(`Job ${job.id} has been converted, sending it to ${job.email} from path ${outputFilePath}`);
         await mail(job.email, outputFilePath, changeExtension(filename, 'mobi'));
       }
