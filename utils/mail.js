@@ -13,6 +13,6 @@ module.exports = async function mail(destinationEmail, downloadLink, filename) {
   };
 
   await new Promise((resolve, reject) => {
-    transporter.sendMail(mailOptions, (error) => error ? reject(error) : resolve({ status: 'sent_mail' }));
+    transporter.sendMail(mailOptions, (error, info) => error ? reject(error) : resolve(info));
   });
 };
