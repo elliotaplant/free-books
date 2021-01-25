@@ -14,6 +14,6 @@ exports.handler = async function(event) {
   const { query } = JSON.parse(event.body);
   console.log(`Querying for "${query}"`);
   const data = await libgen.search({ mirror, query });
-  console.log(`Found ${data.length || 0} result ${data.length === 1 ? '' : 's'}`);
+  console.log(`Found ${data.length || 0} result${data.length === 1 ? '' : 's'}`);
   return respondWith(200, data);
 };
