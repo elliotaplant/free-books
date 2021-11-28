@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Free Books</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="favicon.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="apple-touch-icon" href="favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="apple-touch-icon" href="favicon.png" />
     <style media="screen">
       * {
-        font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, roboto, noto, segoe ui, arial, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir,
+          roboto, noto, segoe ui, arial, sans-serif;
         box-sizing: border-box;
       }
 
@@ -34,7 +35,8 @@
       }
 
       @media only screen and (max-width: 600px) {
-        input, button {
+        input,
+        button {
           width: 100%;
         }
       }
@@ -48,7 +50,8 @@
         border-bottom: 1px solid #f2f2f2;
       }
 
-      th, td {
+      th,
+      td {
         text-align: left;
         padding: 8px;
       }
@@ -61,93 +64,119 @@
   <body>
     <h1>Free Books</h1>
     <p>
-      Before using this app, register the email <b>free.books.sender@gmail.com</b> on your Amazon Kindle
+      Before using this app, register the email
+      <b>free.books.sender@gmail.com</b> on your Amazon Kindle
       <a href="addEmail">devices page</a>
     </p>
-    <form onsubmit="query(event)">
+    <form onsubmit="queryWithFiction(event)">
       <label>Kindle Email (<a href="addEmail">what is this?</a>)</label>
-      <input id="kindleEmailInput" placeholder="youremailaddress@kindle.com" required>
+      <input
+        id="kindleEmailInput"
+        placeholder="youremailaddress@kindle.com"
+        required
+      />
 
-      <br>
+      <br />
 
       <label>Book Search</label>
-      <input id="queryInput" required>
+      <input id="queryInput" required />
       <button id="queryBtn">Search</button>
     </form>
-    <div id="errDiv" style="color: red"></div>
+    <div id="errDiv" style="color: red;"></div>
 
-    <table id="resultsTable" style="display: none">
-      <thead><th>Cover</th><th>Title</th><th>Author</th><th>Language</th><th>Extension</th><th>Size</th><th /></thead>
+    <table id="resultsTable" style="display: none;">
+      <thead>
+        <th>Cover</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Language</th>
+        <th>Extension</th>
+        <th>Size</th>
+        <th />
+      </thead>
       <tbody id="resultsTableBody"></tbody>
     </table>
 
     <script type="text/javascript">
-      const IMG_PROXY_PREFIX = '/.netlify/functions/imgProxy?url=http://libgen.is/covers/';
-      const KINDLE_EMAIL_KEY = 'kindleEmail';
+      const KINDLE_EMAIL_KEY = "kindleEmail";
 
-      let kindleEmail = localStorage.getItem(KINDLE_EMAIL_KEY)
+      let kindleEmail = localStorage.getItem(KINDLE_EMAIL_KEY);
       kindleEmailInput.value = kindleEmail;
 
       kindleEmailInput.onkeyup = () => {
         localStorage.setItem(KINDLE_EMAIL_KEY, kindleEmailInput.value);
         kindleEmail = kindleEmailInput.value;
-      }
+      };
 
-      function query(event) {
+      function queryWithFiction(event) {
         event.preventDefault();
         queryBtn.disabled = true;
-        queryBtn.innerText = 'Searching';
+        queryBtn.innerText = "Searching";
 
-        fetch('/.netlify/functions/query', {
-          method: 'POST',
+        fetch("/.netlify/functions/queryWithFiction", {
+          method: "POST",
           body: JSON.stringify({ query: queryInput.value }),
         })
-          .then(r => r.json())
-          .then(queryResponse => {
-            resultsTable.style.display = 'block';
+          .then((r) => r.json())
+          .then((queryResponse) => {
+            resultsTable.style.display = "block";
             if (!Array.isArray(queryResponse)) {
-              resultsTableBody.innerHTML = '<td>No Results</td>'
+              resultsTableBody.innerHTML = "<td>No Results</td>";
               return;
             }
-            resultsTableBody.innerHTML = queryResponse.map(qr => `
-              <td><img class="cover" src="${IMG_PROXY_PREFIX + qr.coverurl}" /></td>
-              ${[qr.title, qr.author, qr.language, qr.extension].map(datum => `<td>${datum}</td>`).join('\n')}
-              <td>${(Number(qr.filesize) / 10e6).toFixed(2)} Mb</td>
+            resultsTableBody.innerHTML = queryResponse
+              .map(
+                (qr) => `
+              ${[qr.title, qr.authors, qr.language, qr.format, qr.size]
+                .map((datum) => `<td>${datum}</td>`)
+                .join("\n")}
               <td>
                 <span class="loading"></span>
-                <button onclick="requestBook(event)" data-md5=${qr.md5}>
+                <button
+                onclick="requestBook(event)"
+                data-md5="${qr.md5}"
+                data-fiction="${qr.fiction}">
                   Send to Kindle
                 </button>
               </td>
-            `).map(row => `<tr>${row}</tr>`).join('\n')
+            `
+              )
+              .map((row) => `<tr>${row}</tr>`)
+              .join("\n");
           })
-          .catch(e => {
+          .catch((e) => {
             errDiv.innerText = e.toString();
           })
           .finally(() => {
             queryBtn.disabled = null;
-            queryBtn.innerText = 'Search';
-          })
+            queryBtn.innerText = "Search";
+          });
       }
 
       function requestBook(event) {
         const btn = event.target;
-        const { md5 } = btn.dataset;
-        const loadingDiv = btn.parentElement.querySelector('.loading');
+        const { md5, fiction } = btn.dataset;
+        const loadingDiv = btn.parentElement.querySelector(".loading");
         btn.disabled = true;
-        btn.innerText = 'Sending to Kindle';
+        btn.innerText = "Sending to Kindle";
 
-        fetch('/.netlify/functions/createJob', {
-          method: 'POST',
-          body: JSON.stringify({ email: kindleEmail, md5 })
-        }).then(() => {
-          btn.style.display = 'none';
-          loadingDiv.innerText = 'Sent book to your Kindle. Expect it to arrive in less than five minutes';
+        fetch("/.netlify/functions/createJob", {
+          method: "POST",
+          body: JSON.stringify({
+            email: kindleEmail,
+            md5,
+            fiction: fiction === "true",
+          }),
         })
-        .catch(e => {
-          errDiv.innerText = e.toString();
-          btn.innerText = 'Something went wrong :(';
-        })
+          .then(() => {
+            btn.style.display = "none";
+            loadingDiv.innerText =
+              "Sent book to your Kindle. Expect it to arrive in less than five minutes";
+          })
+          .catch((e) => {
+            errDiv.innerText = e.toString();
+            btn.innerText = "Something went wrong :(";
+          });
       }
     </script>
   </body>
