@@ -13,10 +13,15 @@ async function main() {
       seriesHtml,
       titleHtml,
       languageHtml,
+      fileHtml,
     ] = row.querySelectorAll("td");
 
     const series = seriesHtml.innerText;
     const language = languageHtml.innerText;
+    const [format, size] = fileHtml.innerText
+      .replace("&nbsp;", " ")
+      .split("/")
+      .map((t) => t.trim());
 
     const authors = authorsHtml
       .querySelectorAll("ul.catalog_authors>li>a")
@@ -27,10 +32,20 @@ async function main() {
     const title = titleLink.innerText;
     const md5 = titleLink.attrs.href.split("/")[2];
 
-    return { authors, series, title, md5, language, fiction: true };
+    return {
+      authors,
+      title,
+      md5,
+      language,
+      format,
+      size,
+      fiction: true,
+    };
   });
 
   return parsedRows;
 }
 
-main().catch(console.error);
+main()
+  .then((rows) => console.log("rows", rows) || rows)
+  .catch(console.error);
