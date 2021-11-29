@@ -1,3 +1,4 @@
+const got = require("got");
 const { parseFiction, parseNonFiction } = require("./parseLibgenResponse");
 
 module.exports = async function queryLibgen(query) {
@@ -6,8 +7,11 @@ module.exports = async function queryLibgen(query) {
     got(`https://libgen.rs/fiction/?q=${encodeURIComponent(query)}`),
   ]);
 
-  const nonFictionBooks = parseNonFiction(nonFictionResponse);
-  const fictionBooks = parseFiction(fictionResponse);
+  const nonFictionBooks = parseNonFiction(nonFictionResponse.body);
+  const fictionBooks = parseFiction(fictionResponse.body);
+
+  console.log("fictionBooks", fictionBooks);
+  console.log("nonFictionBooks", nonFictionBooks);
 
   return fictionBooks.concat(nonFictionBooks);
 };

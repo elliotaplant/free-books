@@ -1,6 +1,6 @@
 const { parse } = require("node-html-parser");
 
-async function parseFiction(html) {
+function parseFiction(html) {
   const root = parse(html);
   const bookRows = root.querySelectorAll("table.catalog>tbody>tr");
   return bookRows.map((row) => {
@@ -40,7 +40,7 @@ async function parseFiction(html) {
   });
 }
 
-async function parseNonFiction(html) {
+function parseNonFiction(html) {
   const root = parse(html);
   const table = root.querySelector("table.c");
   const rows = table.querySelectorAll("tr").slice(1);
