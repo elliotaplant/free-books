@@ -1,6 +1,11 @@
 const got = require("got");
+const parse = require("parse");
 
 module.exports = async function getDownloadLink(md5, fiction) {
-  const downloadPage = await got("http://library.lol/main/" + md5); // TODO: Make this work for fiction
-  return downloadPage.body.match(/<a href="(.*)">GET<\/a>/)[1];
+  const downloadPageResponse = await got(
+    `http://library.lol/${fiction ? "fiction" : "main"}/${md5}`
+  );
+  const downloadPage = parse(downloadPage.body);
+  const downloadLink = downloadPage.querySelector("#download a");
+  return downloadLink.attrs.href;
 };

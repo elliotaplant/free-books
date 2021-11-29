@@ -10,8 +10,5 @@ module.exports = async function queryLibgen(query) {
   const nonFictionBooks = parseNonFiction(nonFictionResponse.body);
   const fictionBooks = parseFiction(fictionResponse.body);
 
-  console.log("fictionBooks", fictionBooks);
-  console.log("nonFictionBooks", nonFictionBooks);
-
   return fictionBooks.concat(nonFictionBooks);
 };
