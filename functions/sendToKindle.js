@@ -1,7 +1,6 @@
 const validateRequest = require('../utils/validateRequest');
 const respondWith = require('../utils/respondWith');
 const mail = require('../utils/mail');
-const { getFilename, getExtension } = require('../utils/fileStuff');
 const getDownloadLink = require('../utils/getDownloadLink');
 
 exports.handler = async function (event, _, callback) {
@@ -14,8 +13,8 @@ exports.handler = async function (event, _, callback) {
 
   try {
     const downloadLink = await getDownloadLink(md5, fiction);
-    const filename = getFilename(downloadLink);
-    const extension = getExtension(downloadLink);
+    const filename = downloadLink.split('/').slice(-1)[0];
+    const extension = downloadLink.split('.').slice(-1)[0];
 
     if (!['epub', 'mobi', 'pdf'].includes(extension)) {
       return respondWith(403, { error: 'Invalid file type' });
