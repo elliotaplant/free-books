@@ -82,9 +82,9 @@
       <input id="queryInput" required />
       <button id="queryBtn">Search</button>
     </form>
-    <div id="errDiv" style="color: red;"></div>
+    <div id="errDiv" style="color: red"></div>
 
-    <table id="resultsTable" style="display: none;">
+    <table id="resultsTable" style="display: none">
       <thead>
         <th>Title</th>
         <th>Author</th>
@@ -97,7 +97,7 @@
     </table>
 
     <script type="text/javascript">
-      const KINDLE_EMAIL_KEY = "kindleEmail";
+      const KINDLE_EMAIL_KEY = 'kindleEmail';
 
       let kindleEmail = localStorage.getItem(KINDLE_EMAIL_KEY);
       kindleEmailInput.value = kindleEmail;
@@ -110,17 +110,17 @@
       function queryWithFiction(event) {
         event.preventDefault();
         queryBtn.disabled = true;
-        queryBtn.innerText = "Searching";
+        queryBtn.innerText = 'Searching';
 
-        fetch("/.netlify/functions/queryWithFiction", {
-          method: "POST",
+        fetch('/.netlify/functions/queryWithFiction', {
+          method: 'POST',
           body: JSON.stringify({ query: queryInput.value }),
         })
           .then((r) => r.json())
           .then((queryResponse) => {
-            resultsTable.style.display = "block";
+            resultsTable.style.display = 'block';
             if (!Array.isArray(queryResponse)) {
-              resultsTableBody.innerHTML = "<td>No Results</td>";
+              resultsTableBody.innerHTML = '<td>No Results</td>';
               return;
             }
             resultsTableBody.innerHTML = queryResponse
@@ -128,7 +128,7 @@
                 (qr) => `
               ${[qr.title, qr.authors, qr.language, qr.format, qr.size]
                 .map((datum) => `<td>${datum}</td>`)
-                .join("\n")}
+                .join('\n')}
               <td>
                 <span class="loading"></span>
                 <button
@@ -141,40 +141,40 @@
             `
               )
               .map((row) => `<tr>${row}</tr>`)
-              .join("\n");
+              .join('\n');
           })
           .catch((e) => {
             errDiv.innerText = e.toString();
           })
           .finally(() => {
             queryBtn.disabled = null;
-            queryBtn.innerText = "Search";
+            queryBtn.innerText = 'Search';
           });
       }
 
       function requestBook(event) {
         const btn = event.target;
         const { md5, fiction } = btn.dataset;
-        const loadingDiv = btn.parentElement.querySelector(".loading");
+        const loadingDiv = btn.parentElement.querySelector('.loading');
         btn.disabled = true;
-        btn.innerText = "Sending to Kindle";
+        btn.innerText = 'Sending to Kindle';
 
-        fetch("/.netlify/functions/createJob", {
-          method: "POST",
+        fetch('/.netlify/functions/sendToKindle', {
+          method: 'POST',
           body: JSON.stringify({
             email: kindleEmail,
             md5,
-            fiction: fiction === "true",
+            fiction: fiction === 'true',
           }),
         })
           .then(() => {
-            btn.style.display = "none";
+            btn.style.display = 'none';
             loadingDiv.innerText =
-              "Sent book to your Kindle. Expect it to arrive in less than five minutes";
+              'Sent book to your Kindle. Expect it to arrive in less than five minutes';
           })
           .catch((e) => {
             errDiv.innerText = e.toString();
-            btn.innerText = "Something went wrong :(";
+            btn.innerText = 'Something went wrong :(';
           });
       }
     </script>
