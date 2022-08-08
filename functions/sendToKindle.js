@@ -24,6 +24,7 @@ exports.handler = async function (event, _, callback) {
 
     return await mail(email, downloadLink, filename);
   } catch (e) {
+    console.error(e);
     return respondWith(500, { error: 'Unable to send to kindle' });
   }
 };
