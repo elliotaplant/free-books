@@ -12,7 +12,11 @@ exports.handler = async function (event, _, callback) {
   const { email, md5, fiction } = JSON.parse(event.body);
 
   try {
+    console.log('Getting download link for', md5);
     const downloadLink = await getDownloadLink(md5, fiction);
+
+    console.log('Got download link for', md5, downloadLink);
+
     const filename = downloadLink.split('/').slice(-1)[0];
     const extension = downloadLink.split('.').slice(-1)[0];
 
@@ -22,7 +26,11 @@ exports.handler = async function (event, _, callback) {
 
     console.log(`${md5} has ${extension} extension, sending it to ${email}`);
 
-    return await mail(email, downloadLink, filename);
+    await mail(email, downloadLink, filename);
+
+    console.log('Sent', downloadLink, 'as', filename, 'to', email);
+
+    return respondWith(200);
   } catch (e) {
     console.error(e);
     return respondWith(500, { error: 'Unable to send to kindle' });
