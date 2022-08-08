@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "got": "11.3.x",
+    "got": "11.8.x",
     "libgen": "^2.1.0",
     "node-html-parser": "^5.1.0",
     "nodemailer": "^6.4.17"
