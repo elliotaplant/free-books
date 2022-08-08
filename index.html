@@ -172,7 +172,7 @@
               throw new Error(status);
             }
           })
-          .then(({ ok }) => {
+          .then(() => {
             btn.style.display = 'none';
             loadingDiv.innerText =
               'Sent book to your Kindle. Expect it to arrive in less than five minutes';
