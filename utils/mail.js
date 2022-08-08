@@ -12,6 +12,7 @@ module.exports = async function mail(destinationEmail, downloadLink, filename) {
     attachments: [{ filename, path: downloadLink }],
   };
 
+  console.log('Sending mail with options', JSON.stringify(mailOptions));
   await new Promise((resolve, reject) => {
     transporter.sendMail(mailOptions, (error, info) =>
       error ? reject(error) : resolve(info)
