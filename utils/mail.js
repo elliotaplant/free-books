@@ -7,9 +7,9 @@ module.exports = async function mail(destinationEmail, downloadLink, filename) {
   const mailOptions = {
     from: auth.user,
     to: destinationEmail,
-    subject: `Free-books sender ${filename}`,
-    text: `${filename} attached`,
-    attachments: [{ filename, path: downloadLink }],
+    subject: `Free-books book ${Date.now()}`,
+    text: 'See attached',
+    attachments: [{ filename, href: downloadLink }],
   };
 
   console.log('Sending mail with options', JSON.stringify(mailOptions));
