@@ -46,7 +46,7 @@ async function cleanup() {
           toDestroy.push(...records.map(({ id }) => id));
           fetchNextPage();
         },
-        (err) => (err ? reject(err) : resolve(jobs))
+        (err) => (err ? reject(err) : resolve(toDestroy))
       )
   );
   logger.info(`Destorying records:`, { toDestroy });
