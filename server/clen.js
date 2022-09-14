@@ -1,3 +1,3 @@
-const { cleanup } = require('./airtable');
+const queryLibgen = require('../utils/queryLibgen');
 
-cleanup().catch(console.error);
+queryLibgen('royal assassin').then(console.log).catch(console.error);

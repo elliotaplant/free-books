@@ -3,6 +3,7 @@ const { parse } = require('node-html-parser');
 function parseFiction(html) {
   const root = parse(html);
   const bookRows = root.querySelectorAll('table.catalog>tbody>tr');
+  console.log('bookRows', bookRows);
   return bookRows.map((row) => {
     const [authorsHtml, seriesHtml, titleHtml, languageHtml, fileHtml] =
       row.querySelectorAll('td');
