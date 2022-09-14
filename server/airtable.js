@@ -50,6 +50,18 @@ async function cleanup() {
       )
   );
   logger.info(`Destorying records:`, { toDestroy });
+
+  const chunks = [];
+  const chunkSize = 10;
+  for (let i = 0; i < toDestroy.length; i += chunkSize) {
+    await new Promise((resolve, reject) =>
+      base('jobs').destroy(toDestroy.slice(i, i + chunkSize), (err) =>
+        err ? reject(err) : resolve()
+      )
+    );
+  }
+
+  logger.info(`Destoryed records:`, { count: toDestroy.length });
 }
 
 module.exports = { getUnfinishedJobs, markJobComplete, cleanup };
