@@ -167,6 +167,11 @@
             fiction: fiction === 'true',
           }),
         })
+          .then(({ ok, status }) => {
+            if (!ok) {
+              throw new Error(status);
+            }
+          })
           .then(() => {
             btn.style.display = 'none';
             loadingDiv.innerText =

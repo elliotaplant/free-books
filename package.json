@@ -9,16 +9,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "airtable": "^0.10.1",
-    "ebook-convert": "^2.0.1",
-    "got": "11.3.x",
+    "got": "11.8.x",
     "libgen": "^2.1.0",
     "node-html-parser": "^5.1.0",
     "nodemailer": "^6.4.17",
     "simple-node-logger": "^18.12.24"
   },
   "devDependencies": {
-    "prettier": "^2.7.1",
-    "wrangler": "^2.0.5"
+    "prettier": "^2.7.1"
   }
 }

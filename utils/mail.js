@@ -7,11 +7,12 @@ module.exports = async function mail(destinationEmail, downloadLink, filename) {
   const mailOptions = {
     from: auth.user,
     to: destinationEmail,
-    subject: 'Email using Node.js ' + new Date(),
-    text: 'That was easy!',
-    attachments: [{ filename, path: downloadLink }],
+    subject: `Free-books book ${Date.now()}`,
+    text: 'See attached',
+    attachments: [{ filename, href: downloadLink }],
   };
 
+  console.log('Sending mail with options', JSON.stringify(mailOptions));
   await new Promise((resolve, reject) => {
     transporter.sendMail(mailOptions, (error, info) =>
       error ? reject(error) : resolve(info)
