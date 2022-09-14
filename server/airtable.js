@@ -34,4 +34,22 @@ function markJobComplete(id) {
   );
 }
 
-module.exports = { getUnfinishedJobs, markJobComplete };
+async function cleanup() {
+  logger.info(`Cleaning up airtable`);
+  const toDestroy = [];
+  // Get sent jobs
+  await new Promise((resolve, reject) =>
+    base('jobs')
+      .select({ filterByFormula: 'OR(sent, NOT(AND(md5, email)))' })
+      .eachPage(
+        (records, fetchNextPage) => {
+          toDestroy.push(...records.map(({ id }) => id));
+          fetchNextPage();
+        },
+        (err) => (err ? reject(err) : resolve(jobs))
+      )
+  );
+  logger.info(`Destorying records:`, { toDestroy });
+}
+
+module.exports = { getUnfinishedJobs, markJobComplete, cleanup };

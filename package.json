@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "airtable": "^0.11.4",
     "got": "11.8.x",
     "libgen": "^2.1.0",
     "node-html-parser": "^5.1.0",
