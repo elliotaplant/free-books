@@ -1,3 +1,0 @@
-name = "free-books"
-main = "workers/index.js"
-compatibility_date = "2022-07-19"
