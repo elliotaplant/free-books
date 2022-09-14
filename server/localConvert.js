@@ -22,8 +22,10 @@ module.exports = async function localConvert(url) {
 
   const options = {
     input: downloadFilePath,
-    output: outputFilePath
+    output: outputFilePath,
   };
 
-  return new Promise((resolve, reject) => convert(options, err => err ? reject(err) : resolve(outputFilePath)));
+  return new Promise((resolve, reject) =>
+    convert(options, (err) => (err ? reject(err) : resolve(outputFilePath)))
+  );
 };

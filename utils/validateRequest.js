@@ -16,7 +16,7 @@ module.exports = function validateBody(event, ...requiredFields) {
     return respondWith(400, { error });
   }
 
-  for (const requiredField  of requiredFields) {
+  for (const requiredField of requiredFields) {
     if (!body.hasOwnProperty(requiredField)) {
       const error = `Body missing required field ${requiredField}`;
       console.error(error);

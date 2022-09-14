@@ -1,5 +1,5 @@
-const got = require("got");
-const { parseFiction, parseNonFiction } = require("./parseLibgenResponse");
+const got = require('got');
+const { parseFiction, parseNonFiction } = require('./parseLibgenResponse');
 
 module.exports = async function queryLibgen(query) {
   const [nonFictionResponse, fictionResponse] = await Promise.all([

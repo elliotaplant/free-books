@@ -5,7 +5,7 @@ exports.handler = async (event) => {
   return {
     statusCode: 200,
     headers: {
-      'Content-type': 'image/jpeg'
+      'Content-type': 'image/jpeg',
     },
     body: buffer.toString('base64'),
     isBase64Encoded: true,

@@ -9,10 +9,12 @@ module.exports = async function mail(destinationEmail, downloadLink, filename) {
     to: destinationEmail,
     subject: 'Email using Node.js ' + new Date(),
     text: 'That was easy!',
-    attachments: [{ filename, path: downloadLink }]
+    attachments: [{ filename, path: downloadLink }],
   };
 
   await new Promise((resolve, reject) => {
-    transporter.sendMail(mailOptions, (error, info) => error ? reject(error) : resolve(info));
+    transporter.sendMail(mailOptions, (error, info) =>
+      error ? reject(error) : resolve(info)
+    );
   });
 };
