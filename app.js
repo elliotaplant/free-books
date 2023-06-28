@@ -67,11 +67,12 @@ app.post('/send-to-kindle', async (req, res) => {
     fetch(`http://library.lol/main/${md5}`),
   ]);
   // find the good response
-  const downloadPageResponse = downloadPageResponses.find(
-    (response) => response.status < 300
-  );
-  console.log('got good response');
-  const downloadPage = parse(downloadPageResponse.body);
+  const downloadPageResponse = downloadPageResponses.find((response) => {
+    console.log('response.status', response.status);
+    return response.status < 300;
+  });
+  const page = await downloadPageResponse.text();
+  const downloadPage = parse(page);
   const downloadLink = downloadPage.querySelector('#download a');
   const href = downloadLink.attrs.href;
 

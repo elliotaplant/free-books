@@ -19,8 +19,9 @@
       }
 
       .pagination {
-        display: flex;
-        justify-content: center;
+        justify-content: space-between;
+        font-size: 1.2em;
+        display: none;
         margin: 1em 0;
       }
 
@@ -32,6 +33,16 @@
   <body>
     <header>
       <h1>Book Search</h1>
+
+      <form>
+        <label for="kindle-email-input">Kindle Email</label>
+        <input
+          type="text"
+          id="kindle-email-input"
+          placeholder="you@kindle.com"
+        />
+      </form>
+      <br />
       <form id="search-form">
         <input type="text" id="title-input" placeholder="Title" />
         <input type="text" id="author-input" placeholder="Author" />
@@ -43,7 +54,6 @@
     </main>
     <div class="pagination">
       <button id="prev-page" disabled>Prev</button>
-      <span id="page-number">1</span>
       <button id="next-page" disabled>Next</button>
     </div>
     <script>
@@ -91,9 +101,9 @@
           const results = await response.json();
           displayResults(results);
           currentPage = page;
-          document.getElementById('page-number').textContent = currentPage;
           document.getElementById('prev-page').disabled = currentPage === 1;
           document.getElementById('next-page').disabled = results.length < 10;
+          document.querySelector('.pagination').style.display = 'flex';
         } else {
           const error = await response.text();
           displayError(error);
@@ -111,22 +121,28 @@
 
         results.forEach((book) => {
           const filesizeKB = book.Filesize / 1024;
-          const filesizeMB = filesizeKB / 1024;
-
           const displayFilesize =
-            filesizeMB < 1
-              ? `${filesizeKB.toFixed(2)} KB`
-              : `${filesizeMB.toFixed(2)} MB`;
+            filesizeKB < 1024
+              ? `${Math.round(filesizeKB)} KB`
+              : `${Math.round(filesizeKB / 1024)} MB`;
 
           const bookCard = document.createElement('div');
 
           bookCard.className = 'book-card'; // Added a class name to the card for styling
           bookCard.innerHTML = `
-            <h2>${book.Title}</h2>
-            <h3>${book.Author}</h3>
-            <p>${book.Year}</p>
-            <p>${displayFilesize}</p>
-        `;
+                        <h2>${book.Title}</h2>
+                        <h3>${book.Author}</h3>
+                        <p>${displayFilesize}</p>
+                        <button
+                          class="send-to-kindle"
+                          data-md5="${book.MD5}"
+                          onclick="sendToKindle('${book.MD5}')"
+                        >
+                          Send to Kindle
+                        </button>
+
+
+                    `;
           resultsSection.appendChild(bookCard);
         });
       }
@@ -134,7 +150,44 @@
       function displayError(error) {
         const resultsSection = document.getElementById('results-section');
         resultsSection.textContent = `An error occurred: ${error}`;
+        document.querySelector('.pagination').style.display = 'none';
       }
+
+      async function sendToKindle(md5) {
+        const email = document.getElementById('kindle-email-input').value;
+        if (!email) {
+          alert('You must set a Kindle email first');
+          return;
+        }
+
+        const response = await fetch('/send-to-kindle', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, md5 }),
+        });
+
+        if (response.ok) {
+          alert('Book sent to Kindle');
+        } else {
+          const error = await response.text();
+          alert(`An error occurred: ${error}`);
+        }
+      }
+
+      document
+        .getElementById('kindle-email-input')
+        .addEventListener('input', (event) => {
+          localStorage.setItem('kindle-email', event.target.value);
+        });
+
+      window.addEventListener('load', () => {
+        const email = localStorage.getItem('kindle-email');
+        if (email) {
+          document.getElementById('kindle-email-input').value = email;
+        }
+      });
     </script>
   </body>
 </html>
