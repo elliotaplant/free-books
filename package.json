@@ -10,10 +10,14 @@
   "license": "ISC",
   "dependencies": {
     "airtable": "^0.11.4",
-    "got": "11.8.x",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "got": "^13.0.0",
     "libgen": "^2.1.0",
-    "node-html-parser": "^5.1.0",
-    "nodemailer": "^6.4.17",
+    "mysql2": "^3.4.2",
+    "node-html-parser": "^6.1.5",
+    "nodemailer": "^6.9.3",
     "simple-node-logger": "^18.12.24"
   },
   "devDependencies": {
