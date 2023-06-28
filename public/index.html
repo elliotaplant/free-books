@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Search</title>
+    <link rel="stylesheet" href="https://unpkg.com/mvp.css" />
+    <style>
+      .book-card {
+        border: 1px solid #cccccc;
+        padding: 1em;
+        margin-bottom: 1em;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+      }
+
+      .book-card h2 {
+        margin-top: 0;
+      }
+
+      .pagination {
+        display: flex;
+        justify-content: center;
+        margin: 1em 0;
+      }
+
+      .pagination button {
+        margin: 0 0.5em;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Book Search</h1>
+      <form id="search-form">
+        <input type="text" id="title-input" placeholder="Title" />
+        <input type="text" id="author-input" placeholder="Author" />
+        <button type="submit">Search</button>
+      </form>
+    </header>
+    <main id="results-section">
+      <!-- Search results will be appended here -->
+    </main>
+    <div class="pagination">
+      <button id="prev-page" disabled>Prev</button>
+      <span id="page-number">1</span>
+      <button id="next-page" disabled>Next</button>
+    </div>
+    <script>
+      let currentPage = 1;
+
+      document
+        .getElementById('search-form')
+        .addEventListener('submit', async (event) => {
+          event.preventDefault();
+
+          const title = document.getElementById('title-input').value;
+          const author = document.getElementById('author-input').value;
+
+          await searchBooks(title, author, 1);
+        });
+
+      document
+        .getElementById('prev-page')
+        .addEventListener('click', async () => {
+          const title = document.getElementById('title-input').value;
+          const author = document.getElementById('author-input').value;
+
+          await searchBooks(title, author, currentPage - 1);
+        });
+
+      document
+        .getElementById('next-page')
+        .addEventListener('click', async () => {
+          const title = document.getElementById('title-input').value;
+          const author = document.getElementById('author-input').value;
+
+          await searchBooks(title, author, currentPage + 1);
+        });
+
+      async function searchBooks(title, author, page) {
+        const response = await fetch('/query', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ title, author, page }),
+        });
+
+        if (response.ok) {
+          const results = await response.json();
+          displayResults(results);
+          currentPage = page;
+          document.getElementById('page-number').textContent = currentPage;
+          document.getElementById('prev-page').disabled = currentPage === 1;
+          document.getElementById('next-page').disabled = results.length < 10;
+        } else {
+          const error = await response.text();
+          displayError(error);
+        }
+      }
+
+      function displayResults(results) {
+        const resultsSection = document.getElementById('results-section');
+        resultsSection.innerHTML = '';
+
+        if (results.length === 0) {
+          resultsSection.textContent = 'No results found';
+          return;
+        }
+
+        results.forEach((book) => {
+          const filesizeKB = book.Filesize / 1024;
+          const filesizeMB = filesizeKB / 1024;
+
+          const displayFilesize =
+            filesizeMB < 1
+              ? `${filesizeKB.toFixed(2)} KB`
+              : `${filesizeMB.toFixed(2)} MB`;
+
+          const bookCard = document.createElement('div');
+
+          bookCard.className = 'book-card'; // Added a class name to the card for styling
+          bookCard.innerHTML = `
+            <h2>${book.Title}</h2>
+            <h3>${book.Author}</h3>
+            <p>${book.Year}</p>
+            <p>${displayFilesize}</p>
+        `;
+          resultsSection.appendChild(bookCard);
+        });
+      }
+
+      function displayError(error) {
+        const resultsSection = document.getElementById('results-section');
+        resultsSection.textContent = `An error occurred: ${error}`;
+      }
+    </script>
+  </body>
+</html>

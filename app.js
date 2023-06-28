@@ -2,14 +2,16 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql2/promise');
 const cors = require('cors');
+const path = require('path');
 const nodemailer = require('nodemailer');
-const getDownloadLink = require('./getDownloadLink');
+const { parse } = require('node-html-parser');
 
 const port = process.env.PORT || 3000;
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.static('public'));
 
 let pool;
 
@@ -20,6 +22,10 @@ async function getPool() {
   return pool;
 }
 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 app.post('/query', async (req, res) => {
   const { title, author, page = 1 } = req.body;
   if (!(title || author)) {
@@ -27,29 +33,47 @@ app.post('/query', async (req, res) => {
   }
 
   const pool = await getPool();
-  const [rows] = await pool.execute(
-    `SELECT * FROM fiction_filtered WHERE 
-         ${title ? `Title LIKE ?` : ''} 
-         ${title && author ? 'AND' : ''}
-         ${author ? `Author LIKE ?` : ''} 
-         LIMIT ?, 10`,
-    [
-      title ? `%${title}%` : null,
-      author ? `%${author}%` : null,
-      (page - 1) * 10,
-    ]
-  );
+
+  let query = 'SELECT * FROM fiction_filtered WHERE ';
+  let queryParams = [];
+
+  if (title) {
+    query += 'Title LIKE ? ';
+    queryParams.push(`%${title}%`);
+  }
+
+  if (author) {
+    if (title) query += 'AND ';
+    query += 'Author LIKE ? ';
+    queryParams.push(`%${author}%`);
+  }
+
+  query += 'LIMIT ?, 10';
+  queryParams.push((page - 1) * 10);
+
+  const [rows] = await pool.execute(query, queryParams);
 
   res.json(rows);
 });
 
 app.post('/send-to-kindle', async (req, res) => {
-  const { email, md5, fiction } = req.body;
+  const { email, md5 } = req.body;
   if (!email || !md5) {
     return res.status(400).send('Both email and md5 are required');
   }
 
-  const downloadLink = await getDownloadLink(md5, fiction);
+  const downloadPageResponses = await Promise.all([
+    fetch(`http://library.lol/fiction/${md5}`),
+    fetch(`http://library.lol/main/${md5}`),
+  ]);
+  // find the good response
+  const downloadPageResponse = downloadPageResponses.find(
+    (response) => response.status < 300
+  );
+  console.log('got good response');
+  const downloadPage = parse(downloadPageResponse.body);
+  const downloadLink = downloadPage.querySelector('#download a');
+  const href = downloadLink.attrs.href;
 
   const auth = {
     user: process.env.SOURCE_EMAIL,
@@ -61,7 +85,7 @@ app.post('/send-to-kindle', async (req, res) => {
     to: email,
     subject: `Free-books book ${Date.now()}`,
     text: 'See attached',
-    attachments: [{ href: downloadLink }],
+    attachments: [{ href }],
   };
 
   console.log('Sending mail with options', JSON.stringify(mailOptions));
