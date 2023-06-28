@@ -184,27 +184,31 @@
       }
 
       async function sendToKindle(md5) {
-        const button = document.querySelector(`button[data-md5="${md5}"]`);
-        button.disabled = true;
+        try {
+          const button = document.querySelector(`button[data-md5="${md5}"]`);
+          button.disabled = true;
 
-        const email = document.getElementById('kindle-email-input').value;
-        if (!email) {
-          alert('You must set a Kindle email first');
-          return;
-        }
+          const email = document.getElementById('kindle-email-input').value;
+          if (!email) {
+            alert('You must set a Kindle email first');
+            return;
+          }
 
-        const response = await fetch('/send-to-kindle', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email, md5 }),
-        });
+          const response = await fetch('/send-to-kindle', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, md5 }),
+          });
 
-        if (response.ok) {
-          alert('Book sent to Kindle');
-        } else {
-          const error = await response.text();
+          if (response.ok) {
+            alert('Book sent to Kindle');
+          } else {
+            const error = await response.text();
+            alert(`An error occurred: ${error}`);
+          }
+        } catch (error) {
           alert(`An error occurred: ${error}`);
         }
 

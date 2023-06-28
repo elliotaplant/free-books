@@ -67,14 +67,19 @@ app.post('/send-to-kindle', async (req, res) => {
     fetch(`http://library.lol/main/${md5}`),
   ]);
   // find the good response
-  const downloadPageResponse = downloadPageResponses.find((response) => {
-    console.log('response.status', response.status);
-    return response.status < 300;
-  });
+  const downloadPageResponse = downloadPageResponses.find(
+    (response) => response.status < 300
+  );
+
+  if (!downloadPageResponse) {
+    throw new Error('Unable to get download link');
+  }
+
   const page = await downloadPageResponse.text();
   const downloadPage = parse(page);
   const downloadLink = downloadPage.querySelector('#download a');
   const href = downloadLink.attrs.href;
+  const filename = decodeURIComponent(href.split('/').slice(-1)[0]);
 
   const auth = {
     user: process.env.SOURCE_EMAIL,
@@ -86,7 +91,7 @@ app.post('/send-to-kindle', async (req, res) => {
     to: email,
     subject: `Free-books book ${Date.now()}`,
     text: 'See attached',
-    attachments: [{ href }],
+    attachments: [{ filename, href }],
   };
 
   console.log('Sending mail with options', JSON.stringify(mailOptions));
