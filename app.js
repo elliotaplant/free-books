@@ -48,8 +48,8 @@ app.post('/query', async (req, res) => {
     queryParams.push(`%${author}%`);
   }
 
-  query += 'LIMIT ?, 10';
-  queryParams.push((page - 1) * 10);
+  query += 'LIMIT ?, 9';
+  queryParams.push((page - 1) * 9);
 
   const [rows] = await pool.execute(query, queryParams);
 

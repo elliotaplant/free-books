@@ -23,10 +23,15 @@
         font-size: 1.2em;
         display: none;
         margin: 1em 0;
+        padding: 0 1rem;
       }
 
       .pagination button {
         margin: 0 0.5em;
+      }
+
+      #search-form {
+        width: 100%;
       }
     </style>
   </head>
@@ -34,28 +39,50 @@
     <header>
       <h1>Book Search</h1>
 
-      <form>
-        <label for="kindle-email-input">Kindle Email</label>
-        <input
-          type="text"
-          id="kindle-email-input"
-          placeholder="you@kindle.com"
-        />
-      </form>
+      <section>
+        <form>
+          <label for="kindle-email-input">Kindle Email</label>
+          <input
+            type="text"
+            id="kindle-email-input"
+            placeholder="you@kindle.com"
+          />
+          <p>
+            To use this tool, please
+            <a
+              href="https://www.amazon.com/gp/help/customer/display.html?nodeId=GX9XLEVV8G4DB28H"
+            >
+              follow these instructions
+            </a>
+            to add <b>free.books.sender@gmail.com</b> to your Kindle's "Approved
+            Personal Document Email List".
+          </p>
+        </form>
+      </section>
       <br />
-      <form id="search-form">
-        <input type="text" id="title-input" placeholder="Title" />
-        <input type="text" id="author-input" placeholder="Author" />
-        <button type="submit">Search</button>
-      </form>
+      <section>
+        <form id="search-form">
+          <label for="title-input">Title</label>
+          <input
+            type="text"
+            id="title-input"
+            placeholder="To Kill a Mocking Bird"
+          />
+          <label for="author-input">Author</label>
+          <input type="text" id="author-input" placeholder="Harper Lee" />
+          <button id="search-button" type="submit">Search</button>
+        </form>
+      </section>
     </header>
-    <main id="results-section">
-      <!-- Search results will be appended here -->
+    <main>
+      <section id="results-section">
+        <!-- Search results will be appended here -->
+      </section>
+      <section class="pagination">
+        <button id="prev-page" disabled>Prev</button>
+        <button id="next-page" disabled>Next</button>
+      </section>
     </main>
-    <div class="pagination">
-      <button id="prev-page" disabled>Prev</button>
-      <button id="next-page" disabled>Next</button>
-    </div>
     <script>
       let currentPage = 1;
 
@@ -89,6 +116,7 @@
         });
 
       async function searchBooks(title, author, page) {
+        disableButtons();
         const response = await fetch('/query', {
           method: 'POST',
           headers: {
@@ -101,11 +129,13 @@
           const results = await response.json();
           displayResults(results);
           currentPage = page;
+          document.getElementById('search-button').disabled = null;
           document.getElementById('prev-page').disabled = currentPage === 1;
-          document.getElementById('next-page').disabled = results.length < 10;
+          document.getElementById('next-page').disabled = results.length < 9;
           document.querySelector('.pagination').style.display = 'flex';
         } else {
           const error = await response.text();
+          enableButtons();
           displayError(error);
         }
       }
@@ -126,23 +156,23 @@
               ? `${Math.round(filesizeKB)} KB`
               : `${Math.round(filesizeKB / 1024)} MB`;
 
-          const bookCard = document.createElement('div');
+          const bookCard = document.createElement('aside');
 
           bookCard.className = 'book-card'; // Added a class name to the card for styling
           bookCard.innerHTML = `
-                        <h2>${book.Title}</h2>
-                        <h3>${book.Author}</h3>
-                        <p>${displayFilesize}</p>
-                        <button
-                          class="send-to-kindle"
-                          data-md5="${book.MD5}"
-                          onclick="sendToKindle('${book.MD5}')"
-                        >
-                          Send to Kindle
-                        </button>
+                              <h2>${book.Title}</h2>
+                              <h3>${book.Author}</h3>
+                              <p>${displayFilesize}</p>
+                              <button
+                                class="send-to-kindle"
+                                data-md5="${book.MD5}"
+                                onclick="sendToKindle('${book.MD5}')"
+                              >
+                                Send to Kindle
+                              </button>
 
 
-                    `;
+                          `;
           resultsSection.appendChild(bookCard);
         });
       }
@@ -154,6 +184,9 @@
       }
 
       async function sendToKindle(md5) {
+        const button = document.querySelector(`button[data-md5="${md5}"]`);
+        button.disabled = true;
+
         const email = document.getElementById('kindle-email-input').value;
         if (!email) {
           alert('You must set a Kindle email first');
@@ -174,6 +207,8 @@
           const error = await response.text();
           alert(`An error occurred: ${error}`);
         }
+
+        button.disabled = false;
       }
 
       document
@@ -188,6 +223,18 @@
           document.getElementById('kindle-email-input').value = email;
         }
       });
+
+      function disableButtons() {
+        document.getElementById('search-button').disabled = true;
+        document.getElementById('prev-page').disabled = true;
+        document.getElementById('next-page').disabled = true;
+      }
+
+      function enableButtons() {
+        document.getElementById('search-button').disabled = false;
+        document.getElementById('prev-page').disabled = false;
+        document.getElementById('next-page').disabled = false;
+      }
     </script>
   </body>
 </html>
