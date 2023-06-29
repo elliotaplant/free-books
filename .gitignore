@@ -2,3 +2,7 @@ node_modules
 secrets.json
 .envrc
 workingDir
+*.rar
+working/
+.my.cnf
+*.bak

@@ -34,7 +34,7 @@ app.post('/query', async (req, res) => {
 
   const pool = await getPool();
 
-  let query = 'SELECT * FROM fiction_filtered WHERE ';
+  let query = 'SELECT * FROM combined WHERE ';
   let queryParams = [];
 
   if (title) {
