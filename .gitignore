@@ -5,3 +5,4 @@ workingDir
 *.rar
 working/
 .my.cnf
+*.bak
