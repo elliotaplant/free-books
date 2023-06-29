@@ -5,10 +5,21 @@ const cors = require('cors');
 const path = require('path');
 const nodemailer = require('nodemailer');
 const { parse } = require('node-html-parser');
+const basicAuth = require('express-basic-auth');
 
 const port = process.env.PORT || 3000;
 
 const app = express();
+
+app.use(
+  basicAuth({
+    users: {
+      [process.env.BASIC_AUTH_USER]: process.env.BASIC_AUTH_PASSWORD,
+    },
+    challenge: true,
+  })
+);
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
