@@ -4,3 +4,4 @@ secrets.json
 workingDir
 *.rar
 working/
+.my.cnf
