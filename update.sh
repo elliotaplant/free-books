@@ -2,9 +2,15 @@
 
 set -e
 
-# Dependencies: unrar, mysql, pscale
+# Dependencies: curl, unrar, mysql, pscale
 
-# Check if unrar, mysql, and pscale are installed
+# Check if curl, unrar, mysql, and pscale are installed
+if ! command -v curl &> /dev/null
+then
+    echo "curl could not be found. Please install curl."
+    exit 1
+fi
+
 if ! command -v unrar &> /dev/null
 then
     echo "unrar could not be found. Please install unrar."
@@ -39,12 +45,14 @@ then
     exit 1
 fi
 
+# Create working directory
+mkdir -p working
+cd working
 
 # Download dbdumps files
 echo "Downloading dbdumps files..."
 curl -LO https://data.library.bz/dbdumps/fiction.rar 
 curl -LO https://data.library.bz/dbdumps/libgen_compact.rar
-
 
 # Check if both files exist or exit with an error
 if [ ! -f "fiction.rar" ] || [ ! -f "libgen_compact.rar" ]; then

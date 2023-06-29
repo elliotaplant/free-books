@@ -3,3 +3,4 @@ secrets.json
 .envrc
 workingDir
 *.rar
+working/
