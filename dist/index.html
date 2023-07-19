@@ -122,9 +122,7 @@
         disableButtons();
         const response = await fetch('/.netlify/functions/query', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ title, author, page }),
         });
 
@@ -199,9 +197,7 @@
 
           const response = await fetch('/.netlify/functions/send-to-kindle', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, md5 }),
           });
 
