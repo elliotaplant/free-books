@@ -103,9 +103,9 @@ lru-cache@^8.0.0:
   integrity sha512-MhWWlVnuab1RG5/zMRRcVGXZLCXrZTgfwMikgzCegsPnG62yDQo5JnqKkrK4jO5iKqDAZGItAqN5CtKBCBWRUA==
 
 mysql2@^3.4.2:
-  version "3.4.2"
-  resolved "https://registry.yarnpkg.com/mysql2/-/mysql2-3.4.2.tgz#b48d78fe09cc4a85d03f7354be2816fa0931c7b9"
-  integrity sha512-hdGwVNke2TJE37gzVvzWRwCFKhrT+5Gy00FDgJUDYArapx3HcaYCJAQUbBiVnB491zLC6HVHNfsmweIotkCRtQ==
+  version "3.5.2"
+  resolved "https://registry.yarnpkg.com/mysql2/-/mysql2-3.5.2.tgz#a06050e1514e9ac15711a8b883ffd51cb44b2dc8"
+  integrity sha512-cptobmhYkYeTBIFp2c0piw2+gElpioga1rUw5UidHvo8yaHijMZoo8A3zyBVoo/K71f7ZFvrShA9iMIy9dCzCA==
   dependencies:
     denque "^2.1.0"
     generate-function "^2.3.1"
@@ -132,9 +132,9 @@ node-html-parser@^6.1.5:
     he "1.2.0"
 
 nodemailer@^6.9.3:
-  version "6.9.3"
-  resolved "https://registry.yarnpkg.com/nodemailer/-/nodemailer-6.9.3.tgz#e4425b85f05d83c43c5cd81bf84ab968f8ef5cbe"
-  integrity sha512-fy9v3NgTzBngrMFkDsKEj0r02U7jm6XfC3b52eoNV+GCrGj+s8pt5OqhiJdWKuw51zCTdiNR/IUD1z33LIIGpg==
+  version "6.9.4"
+  resolved "https://registry.yarnpkg.com/nodemailer/-/nodemailer-6.9.4.tgz#93bd4a60eb0be6fa088a0483340551ebabfd2abf"
+  integrity sha512-CXjQvrQZV4+6X5wP6ZIgdehJamI63MFoYFGGPtHudWym9qaEHDNdPzaj5bfMCvxG1vhAileSWW90q7nL0N36mA==
 
 nth-check@^2.0.1:
   version "2.1.1"
@@ -144,9 +144,9 @@ nth-check@^2.0.1:
     boolbase "^1.0.0"
 
 prettier@^2.7.1:
-  version "2.7.1"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.7.1.tgz#e235806850d057f97bb08368a4f7d899f7760c64"
-  integrity sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==
+  version "2.8.8"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.8.8.tgz#e8c5d7e98a4305ffe3de2e1fc4aca1a71c28b1da"
+  integrity sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==
 
 "safer-buffer@>= 2.1.2 < 3.0.0":
   version "2.1.2"
