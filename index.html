@@ -185,8 +185,8 @@
       }
 
       async function sendToKindle(md5) {
+        const button = document.querySelector(`button[data-md5="${md5}"]`);
         try {
-          const button = document.querySelector(`button[data-md5="${md5}"]`);
           button.disabled = true;
 
           const email = document.getElementById('kindle-email-input').value;
@@ -209,9 +209,10 @@
           }
         } catch (error) {
           alert(`An error occurred: ${error}`);
+        } finally {
+          console.log('Lol');
+          button.disabled = false;
         }
-
-        button.disabled = false;
       }
 
       document

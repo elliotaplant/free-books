@@ -6,3 +6,5 @@ workingDir
 working/
 .my.cnf
 *.bak
+# Local Netlify folder
+.netlify

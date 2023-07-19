@@ -1,4 +1,3 @@
-const fetch = require('node-fetch');
 const { parse } = require('node-html-parser');
 const nodemailer = require('nodemailer');
 
@@ -21,7 +20,9 @@ exports.handler = async function (event, context) {
   );
 
   if (!downloadPageResponse) {
-    throw new Error('Unable to get download link');
+    throw new Error(
+      'Unable to get download link: no successful page response found'
+    );
   }
 
   const page = await downloadPageResponse.text();
@@ -39,7 +40,7 @@ exports.handler = async function (event, context) {
   const mailOptions = {
     from: auth.user,
     to: email,
-    subject: `Free-books | ${filename} | ${Date.toISOString()}`,
+    subject: `Free-books | ${filename} | ${new Date().toISOString()}`,
     text: filename,
     attachments: [{ filename, href }],
   };
