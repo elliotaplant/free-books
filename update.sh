@@ -104,9 +104,9 @@ fi
 # Create combined table and run queries
 log "Creating and populating combined table..."
 mysql libgen_combined <<SQL
-CREATE TABLE combined (MD5 CHAR(32), Title TEXT, Author TEXT, Filesize INT);
-INSERT INTO combined SELECT MD5, Title, Author, Filesize FROM fiction WHERE Language = 'English' AND (Extension = 'epub' OR Extension = 'mobi') AND Filesize <= 25000000;
-INSERT INTO combined SELECT MD5, Title, Author, Filesize FROM updated WHERE Language = 'English' AND (Extension = 'epub' OR Extension = 'mobi') AND Filesize <= 25000000;
+CREATE TABLE combined (MD5 CHAR(32), Title TEXT, Author TEXT, Filesize INT, Fiction BOOLEAN);
+INSERT INTO combined SELECT MD5, Title, Author, Filesize, TRUE FROM fiction WHERE Language = 'English' AND (Extension = 'epub' OR Extension = 'mobi') AND Filesize <= 25000000;
+INSERT INTO combined SELECT MD5, Title, Author, Filesize, FALSE FROM updated WHERE Language = 'English' AND (Extension = 'epub' OR Extension = 'mobi') AND Filesize <= 25000000;
 SQL
 
 # Print the number of rows in the combined table
@@ -123,4 +123,4 @@ pscale shell libgen-english main < combined.sql
 
 # Print the number of rows in libgen-english using pscale
 log "Number of rows in libgen-english:"
-pscale query run libgen-english main "SELECT COUNT(*) FROM combined;"
+echo "SELECT COUNT(*) FROM combined;" | pscale shell libgen-english main 

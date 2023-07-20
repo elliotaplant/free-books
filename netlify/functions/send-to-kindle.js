@@ -1,35 +1,14 @@
-const { parse } = require('node-html-parser');
 const nodemailer = require('nodemailer');
 
-exports.handler = async function (event, context) {
+exports.handler = async function (event) {
   const body = JSON.parse(event.body);
-  const { email, md5 } = body;
+  const { email, url } = body;
 
-  if (!email || !md5) {
-    return { statusCode: 400, body: 'Both email and md5 are required' };
+  if (!email || !url) {
+    return { statusCode: 400, body: 'Both email and url are required' };
   }
 
-  // Change this to a race
-  const downloadPageResponses = await Promise.all([
-    fetch(`http://library.lol/fiction/${md5}`),
-    fetch(`http://library.lol/main/${md5}`),
-  ]);
-
-  const downloadPageResponse = downloadPageResponses.find(
-    (response) => response.status < 300
-  );
-
-  if (!downloadPageResponse) {
-    throw new Error(
-      'Unable to get download link: no successful page response found'
-    );
-  }
-
-  const page = await downloadPageResponse.text();
-  const downloadPage = parse(page);
-  const downloadLink = downloadPage.querySelector('#download a');
-  const href = downloadLink.attrs.href;
-  const filename = decodeURIComponent(href.split('/').slice(-1)[0]);
+  const filename = new URL(url).searchParams.get('filename');
 
   const auth = {
     user: process.env.SOURCE_EMAIL,
@@ -42,7 +21,7 @@ exports.handler = async function (event, context) {
     to: email,
     subject: `Free-books | ${filename} | ${new Date().toISOString()}`,
     text: filename,
-    attachments: [{ filename, href }],
+    attachments: [{ filename, href: url }],
   };
 
   await new Promise((resolve, reject) => {

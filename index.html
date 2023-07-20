@@ -151,6 +151,7 @@
         }
 
         results.forEach((book) => {
+          const fiction = book.Fiction ? true : false;
           const filesizeKB = book.Filesize / 1024;
           const displayFilesize =
             filesizeKB < 1024
@@ -158,22 +159,26 @@
               : `${Math.round(filesizeKB / 1024)} MB`;
 
           const bookCard = document.createElement('aside');
-
-          bookCard.className = 'book-card'; // Added a class name to the card for styling
+          bookCard.className = 'book-card';
           bookCard.innerHTML = `
-                              <h2>${book.Title}</h2>
-                              <h3>${book.Author}</h3>
-                              <p>${displayFilesize}</p>
-                              <button
-                                class="send-to-kindle"
-                                data-md5="${book.MD5}"
-                                onclick="sendToKindle('${book.MD5}')"
-                              >
-                                Send to Kindle
-                              </button>
-
-
-                          `;
+            <h2>${book.Title}</h2>
+            <h3>${book.Author}</h3>
+            <p>${displayFilesize}</p>
+            <button
+              class="send-to-kindle"
+              data-md5="${book.MD5}"
+              onclick="sendBookToKindle('${book.MD5}', ${fiction})"
+            >
+              Send to Kindle
+            </button>
+            <button
+              class="download-book"
+              data-md5="${book.MD5}"
+              onclick="downloadBook('${book.MD5}', ${fiction})"
+            >
+              Download
+            </button>
+          `;
           resultsSection.appendChild(bookCard);
         });
       }
@@ -184,21 +189,35 @@
         document.querySelector('.pagination').style.display = 'none';
       }
 
-      async function sendToKindle(md5) {
-        const button = document.querySelector(`button[data-md5="${md5}"]`);
-        try {
-          button.disabled = true;
+      async function getDownloadLink(md5, fiction) {
+        const response = await fetch('/.netlify/functions/get-download-link', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ md5, fiction }),
+        });
 
+        if (response.ok) {
+          const { downloadLink } = await response.json();
+          return downloadLink;
+        } else {
+          const error = await response.text();
+          throw new Error(error);
+        }
+      }
+
+      async function sendBookToKindle(md5, fiction) {
+        try {
           const email = document.getElementById('kindle-email-input').value;
           if (!email) {
             alert('You must set a Kindle email first');
             return;
           }
 
+          const downloadLink = await getDownloadLink(md5, fiction);
           const response = await fetch('/.netlify/functions/send-to-kindle', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, md5 }),
+            body: JSON.stringify({ email, url: downloadLink }),
           });
 
           if (response.ok) {
@@ -209,8 +228,20 @@
           }
         } catch (error) {
           alert(`An error occurred: ${error}`);
-        } finally {
-          button.disabled = false;
+        }
+      }
+
+      async function downloadBook(md5, fiction) {
+        try {
+          const downloadLink = await getDownloadLink(md5, fiction);
+          const a = document.createElement('a');
+          a.href = downloadLink;
+          a.download = new URL(downloadLink).searchParams.get('filename');
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        } catch (error) {
+          alert(`An error occurred: ${error}`);
         }
       }
 
