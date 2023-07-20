@@ -1,0 +1,2 @@
+[functions."planetscale-keepalive"]
+schedule = "@daily"
