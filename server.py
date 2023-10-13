@@ -7,6 +7,10 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
 from urllib.parse import urlparse, parse_qs
+from dotenv import load_dotenv
+
+# Load the variables from .envrc
+load_dotenv(dotenv_path=".envrc")
 
 REDIS_URL = os.environ.get('REDIS_URL', None)
 REDIS_KEY = os.environ.get('REDIS_KEY', None)
