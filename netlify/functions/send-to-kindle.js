@@ -1,4 +1,6 @@
-const nodemailer = require('nodemailer');
+const Redis = require('ioredis');
+
+const redis = new Redis(process.env.REDIS_URL);
 
 exports.handler = async function (event) {
   const body = JSON.parse(event.body);
@@ -8,27 +10,11 @@ exports.handler = async function (event) {
     return { statusCode: 400, body: 'Both email and url are required' };
   }
 
-  const filename = new URL(url).searchParams.get('filename');
+  try {
+    await redis.rpush(process.env.REDIS_KEY, [url, email].join(','));
 
-  const auth = {
-    user: process.env.SOURCE_EMAIL,
-    pass: process.env.SOURCE_EMAIL_PASSWORD,
-  };
-
-  const transporter = nodemailer.createTransport({ service: 'gmail', auth });
-  const mailOptions = {
-    from: auth.user,
-    to: email,
-    subject: `Free-books | ${filename} | ${new Date().toISOString()}`,
-    text: filename,
-    attachments: [{ filename, href: url }],
-  };
-
-  await new Promise((resolve, reject) => {
-    transporter.sendMail(mailOptions, (error, info) =>
-      error ? reject(error) : resolve(info)
-    );
-  });
-
-  return { statusCode: 200, body: 'Email sent' };
+    return { statusCode: 200, body: 'Book enqueued' };
+  } catch (error) {
+    return { statusCode: 500, body: `Error: ${error.message}` };
+  }
 };

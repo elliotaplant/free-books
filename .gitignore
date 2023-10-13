@@ -8,3 +8,4 @@ working/
 *.bak
 # Local Netlify folder
 .netlify
+venv

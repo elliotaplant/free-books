@@ -7,6 +7,8 @@ Set up your environment with these variables:
 export DATABASE_URL=<Get this from PlanetScale or wherever you host your mysql database>
 export SOURCE_EMAIL=<address_used_to_send_books@gmail.com>
 export SOURCE_EMAIL_PASSWORD=<password for above address>
+export REDIS_URL=<url to your redis instance>
+export REDIS_KEY=<key to access your list of emails/hashes to send to>
 ```
 
 This app is a relatively simple node app. Run `yarn start` to start the server.
