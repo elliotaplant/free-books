@@ -28,8 +28,9 @@ redis_result = redis_client.lrange(REDIS_KEY, 0, -1)
 print(f"Found {len(redis_result)} books to send")
 
 # Deleting the value at REDIS_KEY to prevent other cron runs
-print("Deleting redis key")
-redis_client.delete(REDIS_KEY)
+if len(redis_result) > 0:
+    print("Deleting redis key")
+    redis_client.delete(REDIS_KEY)
 
 for item in redis_result:
     # Assuming url and email are comma separated in Redis
