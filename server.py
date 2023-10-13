@@ -27,6 +27,10 @@ redis_result = redis_client.lrange(REDIS_KEY, 0, -1)
 
 print(f"Found {len(redis_result)} books to send")
 
+# Deleting the value at REDIS_KEY to prevent other cron runs
+print("Deleting redis key")
+redis_client.delete(REDIS_KEY)
+
 for item in redis_result:
     # Assuming url and email are comma separated in Redis
     url, email = item.decode().split(',')
@@ -77,7 +81,3 @@ for item in redis_result:
             print(f"An error occurred: {e}")
     else:
         print(f"Filename not found for {url}")
-
-# Deleting the value at REDIS_KEY after processing all items
-print("Deleting redis key")
-redis_client.delete(REDIS_KEY)
