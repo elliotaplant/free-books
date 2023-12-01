@@ -105,8 +105,8 @@ fi
 log "Creating and populating combined table..."
 mysql libgen_combined <<SQL
 CREATE TABLE combined (MD5 CHAR(32), Title TEXT, Author TEXT, Filesize INT, Fiction BOOLEAN);
-INSERT INTO combined SELECT MD5, Title, Author, Filesize, TRUE FROM fiction WHERE Language = 'English' AND (Extension = 'epub' OR Extension = 'mobi') AND Filesize <= 25000000;
-INSERT INTO combined SELECT MD5, Title, Author, Filesize, FALSE FROM updated WHERE Language = 'English' AND (Extension = 'epub' OR Extension = 'mobi') AND Filesize <= 25000000;
+INSERT INTO combined SELECT MD5, Title, Author, Filesize, TRUE FROM fiction WHERE Language = 'English' AND Extension = 'epub' AND Filesize <= 25000000;
+INSERT INTO combined SELECT MD5, Title, Author, Filesize, FALSE FROM updated WHERE Language = 'English' AND Extension = 'epub' AND Filesize <= 25000000;
 SQL
 
 # Print the number of rows in the combined table
