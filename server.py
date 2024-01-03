@@ -89,6 +89,9 @@ for item in redis_result:
                 server.sendmail(from_email, email, text)
                 server.quit()
                 logging.info(f"Successfully sent {url} to {email}")
+            else:
+                logging.warning(
+                    f"Unexpected status code: {response.status_code}")
         else:
             logging.warning(f"Filename not found for {url}")
     except Exception as e:
