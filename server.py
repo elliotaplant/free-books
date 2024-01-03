@@ -92,6 +92,8 @@ for item in redis_result:
             else:
                 logging.warning(
                     f"Unexpected status code: {response.status_code}")
+                logging.warning(
+                    f"Response text: {response.text}")
         else:
             logging.warning(f"Filename not found for {url}")
     except Exception as e:

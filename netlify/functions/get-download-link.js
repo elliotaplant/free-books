@@ -21,9 +21,9 @@ exports.handler = async function (event) {
   const page = await downloadPageResponse.text();
   const downloadPage = parse(page);
   const downloadLinks = downloadPage.querySelectorAll('#download a');
-  const cloudflareLink = downloadLinks.find(
-    (link) => link.textContent === 'Cloudflare'
-  );
+  const cloudflareLink =
+    downloadLinks.find((link) => link.textContent === 'IPFS.io') ||
+    downloadLinks.find((link) => link.textContent === 'Cloudflare');
   const href = cloudflareLink.attrs.href;
 
   return { statusCode: 200, body: JSON.stringify({ downloadLink: href }) };
